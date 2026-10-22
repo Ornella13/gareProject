@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GARE FCE — Exportation Bordereau & Certificat RFC 3161 (Django){% endblock %}
+
+{% block content %}
+<div class="max-w-[1720px] mx-auto flex flex-col gap-5 pb-12 font-sans select-none">
+  <!-- Fil d'Ariane -->
+  <nav class="flex items-center gap-2 text-[11px] text-[#74777e] font-medium">
+    <a href="{% url 'dashboard' %}" class="hover:text-[#001229] flex items-center gap-1">
+      <span class="material-symbols-outlined text-[16px]">home</span>
+      <span>Accueil</span>
+    </a>
+    <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+    <a href="{% url 'register' %}" class="hover:text-[#001229]">Registre des Décisions</a>
+    <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+    <span class="font-mono text-[11px] text-[#001229] font-semibold px-1.5 py-0.5 bg-[#e5eeff] rounded border border-[#c4c6ce]">
+      FCE/DG/DEC/2026/015
+    </span>
+    <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+    <span class="text-[#0051d5] font-semibold">Export Bordereau de versement &amp; Certificat RFC 3161</span>
+  </nav>
+
+  <!-- En-tête de page -->
+  <section class="bg-white border border-[#c4c6ce] p-5 rounded-lg flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xs">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-[22px] text-[#001229] font-bold tracking-tight">
+        Exportation du Bordereau de Versement d'Archives &amp; Certificat d'Horodatage RFC 3161
+      </h1>
+      <p class="text-[13px] text-[#44474d]">
+        Génération des livrables probants d'archivage définitif — Norme ISO 15489 / NF Z42-013 — Magasin WORM
+      </p>
+      
+      <!-- Badges officiels -->
+      <div class="flex items-center gap-2.5 pt-1 flex-wrap text-[11px]">
+        <div class="flex items-center gap-1.5 bg-[#e5eeff] px-2.5 py-1 rounded border border-[#c4c6ce] text-[#001229] font-mono">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#0051d5]"></span>
+          <span>Bordereau n° BV-2026-FCE-089</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 text-emerald-800">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+          <span class="font-semibold">Acte Scellé RFC 3161 Conforme</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-blue-50 px-2.5 py-1 rounded border border-blue-200 text-blue-800">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+          <span>PDF/A-1b Généré (ISO 19005-1)</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-[#eff4ff] px-2.5 py-1 rounded border border-[#c4c6ce] text-[#44474d]">
+          <span class="material-symbols-outlined text-[13px]">storage</span>
+          <span>Coffre WORM : Baie-04 / Casier-12</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Globales -->
+    <div class="flex items-center gap-2 shrink-0">
+      <a href="{% url 'export-zip-bundle' 'FCE-DG-DEC-2026-015' %}" class="h-9 px-3.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-[13px] font-semibold flex items-center justify-center gap-2 shadow-sm transition-colors">
+        <span class="material-symbols-outlined text-emerald-200 material-symbols-fill text-[18px]">check_circle</span>
+        <span>Bundle Téléchargé (.ZIP scellé + Checksum)</span>
+        <span class="px-1.5 py-0.5 rounded bg-emerald-800 text-[10px] font-mono text-emerald-100 border border-emerald-600">4.82 Mo</span>
+      </a>
+
+      <a href="{% url 'decision_viewer' %}" class="h-9 px-3 bg-white hover:bg-[#eff4ff] text-[#001229] border border-[#c4c6ce] rounded text-[13px] font-semibold flex items-center gap-1.5 transition-colors">
+        <span class="material-symbols-outlined text-[#74777e] text-[18px]">picture_as_pdf</span>
+        <span>Bordereau (PDF/A)</span>
+      </a>
+
+      <button onclick="window.print()" class="h-9 px-2.5 bg-white hover:bg-[#eff4ff] text-[#74777e] hover:text-[#001229] border border-[#c4c6ce] rounded flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[18px]">print</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Grille 2 Colonnes -->
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+    <!-- COLONNE GAUCHE (7/12) : Rendu A4 du Bordereau -->
+    <div class="xl:col-span-7 flex flex-col gap-3">
+      <div class="bg-white border border-[#c4c6ce] px-4 py-2 rounded-t-lg flex items-center justify-between text-[11px] font-medium text-[#44474d]">
+        <span class="font-semibold text-[#001229] flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[#0051d5] text-[18px]">visibility</span>
+          <span>Prévisualisation Document Réglementaire (Feuille A4 - PDF/A-1b Django)</span>
+        </span>
+        <span class="font-mono bg-[#e5eeff] px-2 py-0.5 rounded text-[10px]">Page 1 / 2</span>
+      </div>
+
+      <!-- Feuille A4 Stylisée -->
+      <div class="bg-white border border-[#c4c6ce] p-8 shadow-sm rounded-b-lg relative watermark-pattern select-text">
+        <!-- Filigrane d'authenticité -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.035] select-none rotate-[-35deg]">
+          <span class="font-bold text-6xl uppercase text-[#001229] tracking-widest text-center leading-tight">
+            ARCHIVE OFFICIELLE FCE<br />PROBANTE ISO 15489
+          </span>
+        </div>
+
+        <!-- En-tête officiel -->
+        <div class="border-b-2 border-[#001229] pb-4 mb-5 text-center relative z-10">
+          <div class="text-[12px] uppercase tracking-widest text-[#44474d] font-semibold">REPOBLIKAN'I MADAGASIKARA</div>
+          <div class="text-[10px] italic text-[#74777e]">Fitiavana — Tanindrazana — Fandrosoana</div>
+          <div class="h-1 w-24 bg-[#001229] mx-auto my-2"></div>
+          
+          <div class="flex items-center justify-between mt-3 text-left">
+            <div class="flex items-center gap-3">
+              <div class="w-14 h-11 rounded-md overflow-hidden bg-white border border-[#001229]/30 shadow-xs shrink-0 flex items-center justify-center p-0.5">
+                <img src="{% url 'fce_logo' %}" alt="Logo FCE" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='{% static 'fce-logo.jpg' %}';">
+              </div>
+              <div>
+                <div class="text-[13px] font-bold text-[#001229] uppercase">
+                  Compagnie du Chemin de Fer Fianarantsoa-Côte Est
+                </div>
+                <div class="text-[11px] text-[#44474d]">Société d'État d'Intérêt Public — Fondée en 1926</div>
+                <div class="text-[10px] text-[#74777e] font-mono">
+                  Direction Générale &amp; Bureau Central des Archives Administratives et Techniques
+                </div>
+              </div>
+            </div>
+            <div class="text-right border border-[#c4c6ce] bg-[#f8f9ff] p-2 rounded">
+              <div class="text-[10px] uppercase font-semibold text-[#74777e]">Cote du Registre Central</div>
+              <div class="font-mono text-[11px] font-bold text-[#0051d5]">ARC-2026-REG-0015</div>
+              <div class="text-[9px] text-[#44474d]">Liasse Scellée</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Titre Formulaire -->
+        <div class="bg-[#e5eeff] p-3 border border-[#c4c6ce] rounded text-center mb-5 relative z-10">
+          <div class="text-[10px] uppercase font-semibold tracking-wider text-[#0051d5]">
+            Formulaire Réglementaire Modèle DAF-04/B
+          </div>
+          <h2 class="text-[18px] font-bold text-[#001229] tracking-tight">
+            BORDEREAU DE VERSEMENT D'ARCHIVES INTERMÉDIAIRES ET DÉFINITIVES
+          </h2>
+          <div class="text-[11px] text-[#44474d] mt-0.5">
+            Application stricte du Décret Ferroviaire n° 2018-412 &amp; Norme ISO 15489 sur la traçabilité des actes d'infrastructure
+          </div>
+        </div>
+
+        <!-- Parties -->
+        <div class="grid grid-cols-2 gap-4 mb-5 text-[12px] relative z-10">
+          <div class="p-3 bg-[#f8f9ff] border border-[#c4c6ce] rounded">
+            <div class="text-[10px] uppercase font-bold text-[#001229] border-b border-[#c4c6ce] pb-1 mb-2">
+              1. Service Versant (Producteur)
+            </div>
+            <div class="space-y-1 text-[11px]">
+              <div><strong>Entité :</strong> Direction Voies &amp; Bâtiments (DVB)</div>
+              <div><strong>Responsable :</strong> Jean-Paul R., Secrétaire Général FCE</div>
+              <div><strong>Origine des pièces :</strong> Direction Centrale FCE</div>
+              <div><strong>Date du versement :</strong> 24 Mars 2026 à 10:19:14 UTC</div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-[#f8f9ff] border border-[#c4c6ce] rounded">
+            <div class="text-[10px] uppercase font-bold text-[#001229] border-b border-[#c4c6ce] pb-1 mb-2">
+              2. Service d'Archives Destinataire
+            </div>
+            <div class="space-y-1 text-[11px]">
+              <div><strong>Dépôt :</strong> Dépôt Central des Archives</div>
+              <div><strong>Localisation :</strong> Magasin Optique WORM — Baie 04 / Rayon 12</div>
+              <div><strong>Statut :</strong> Versement définitif sous scellement probant</div>
+              <div><strong>N° Bordereau :</strong> <span class="font-mono text-[#0051d5] font-bold">BV-FCE-2026-0042</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tableau des 3 articles -->
+        <div class="mb-5 relative z-10">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#001229] mb-2 flex items-center justify-between">
+            <span>3. Inventaire Analytique des Articles Versés</span>
+            <span class="text-[#74777e] font-mono text-[10px]">3 articles répertoriés — 8 pages total</span>
+          </div>
+          <table class="w-full text-left text-xs border border-[#c4c6ce] rounded overflow-hidden">
+            <thead class="bg-[#e5eeff] text-[#44474d] font-semibold border-b border-[#c4c6ce]">
+              <tr>
+                <th class="py-2 px-2.5 w-12 text-center">Art.</th>
+                <th class="py-2 px-3">Description &amp; Titre de l'Archive</th>
+                <th class="py-2 px-2.5 w-20">Format</th>
+                <th class="py-2 px-2.5 w-16 text-center">Pages</th>
+                <th class="py-2 px-3 font-mono text-[10px]">Empreinte de Contrôle SHA-256</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#c4c6ce] bg-white">
+              <tr class="hover:bg-[#eff4ff]">
+                <td class="py-2 px-2.5 text-center font-mono font-bold text-[#001229]">01</td>
+                <td class="py-2 px-3 font-semibold text-[#001229]">
+                  <a href="{% url 'decision_viewer' %}" class="hover:text-[#0051d5]">Décision n° 015-2026/FCE/DG</a>
+                  <div class="text-[10px] text-[#74777e] font-normal">Organisation maintenance urgente PK-54 et limitation 30 km/h</div>
+                </td>
+                <td class="py-2 px-2.5"><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-mono text-[10px]">PDF/A-1b</span></td>
+                <td class="py-2 px-2.5 text-center font-mono">2 p.</td>
+                <td class="py-2 px-3 font-mono text-[10px] text-[#74777e] break-all">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</td>
+              </tr>
+              <tr class="hover:bg-[#eff4ff]">
+                <td class="py-2 px-2.5 text-center font-mono font-bold text-[#001229]">02</td>
+                <td class="py-2 px-3 font-semibold text-[#001229]">
+                  Procès-Verbal de constatation d'affaissement PK-54+300
+                  <div class="text-[10px] text-[#74777e] font-normal">Rapport géotechnique brigade cantonnière</div>
+                </td>
+                <td class="py-2 px-2.5"><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-mono text-[10px]">PDF/A-1b</span></td>
+                <td class="py-2 px-2.5 text-center font-mono">4 p.</td>
+                <td class="py-2 px-3 font-mono text-[10px] text-[#74777e] break-all">a7d931bc40e8912d0912cb841289fe42890b215414890c25a189f7823901ba12</td>
+              </tr>
+              <tr class="hover:bg-[#eff4ff]">
+                <td class="py-2 px-2.5 text-center font-mono font-bold text-[#001229]">03</td>
+                <td class="py-2 px-3 font-semibold text-[#001229]">
+                  Ordre de Service DVB-2026-118
+                  <div class="text-[10px] text-[#74777e] font-normal">Remplacement express 40 traverses métalliques PK-54</div>
+                </td>
+                <td class="py-2 px-2.5"><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-mono text-[10px]">PDF/A-1b</span></td>
+                <td class="py-2 px-2.5 text-center font-mono">2 p.</td>
+                <td class="py-2 px-3 font-mono text-[10px] text-[#74777e] break-all">f421c9902bd167098e14725ba8290f1267894567ac89104576342890123efb67</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Visas -->
+        <div class="border-t-2 border-[#001229] pt-4 relative z-10">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#001229] mb-3">
+            5. Visas de Prise en Charge et de Conformité Probante
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="border border-[#c4c6ce] p-2.5 rounded bg-[#f8f9ff] flex flex-col justify-between h-28">
+              <div>
+                <div class="text-[10px] uppercase font-bold text-[#001229]">Le Directeur Général FCE</div>
+                <div class="text-[9px] text-[#74777e]">Dr. H. Rasolofo</div>
+              </div>
+              <div class="text-center my-auto">
+                <span class="inline-block border border-[#0051d5] text-[#0051d5] px-2 py-0.5 rounded text-[10px] font-semibold uppercase rotate-[-6deg]">
+                  Approuvé &amp; Scellé
+                </span>
+              </div>
+              <div class="text-[9px] text-[#74777e] font-mono border-t border-[#c4c6ce] pt-1">Signature eIDAS vérifiée</div>
+            </div>
+
+            <div class="border border-[#c4c6ce] p-2.5 rounded bg-[#f8f9ff] flex flex-col justify-between h-28">
+              <div>
+                <div class="text-[10px] uppercase font-bold text-[#001229]">L'Archiviste Général FCE</div>
+                <div class="text-[9px] text-[#74777e]">Jean-Paul R. — Secrétaire Général</div>
+              </div>
+              <div class="text-center my-auto">
+                <div class="text-[11px] font-serif italic text-[#001229]">Jean-Paul R.</div>
+                <div class="text-[9px] font-mono text-emerald-700">Signé le 24/03/2026</div>
+              </div>
+              <div class="text-[9px] text-[#74777e] font-mono border-t border-[#c4c6ce] pt-1">Versement certifié conforme</div>
+            </div>
+
+            <div class="border border-[#c4c6ce] p-2.5 rounded bg-[#f8f9ff] flex flex-col justify-between h-28">
+              <div>
+                <div class="text-[10px] uppercase font-bold text-[#001229]">Chef de Magasin</div>
+                <div class="text-[9px] text-[#74777e]">Dépôt Central</div>
+              </div>
+              <div class="text-center my-auto">
+                <span class="inline-block border-2 border-emerald-700 text-emerald-800 p-1 rounded text-[9px] font-bold uppercase rotate-3">
+                  ✓ Pris en Charge WORM
+                </span>
+              </div>
+              <div class="text-[9px] text-[#74777e] font-mono border-t border-[#c4c6ce] pt-1">Support Optique Scellé #089</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLONNE DROITE (5/12) : Certificat RFC 3161 & Sceau Dynamique -->
+    <div class="xl:col-span-5 flex flex-col gap-4">
+      <!-- Certificat RFC 3161 -->
+      <div class="bg-white border border-[#c4c6ce] rounded-lg p-5 shadow-xs flex flex-col gap-4">
+        <div class="flex items-center justify-between border-b border-[#c4c6ce] pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
+              <span class="material-symbols-outlined text-[18px]">verified_user</span>
+            </span>
+            <div>
+              <h3 class="text-[15px] font-bold text-[#001229]">Certificat d'Horodatage RFC 3161</h3>
+              <div class="text-[11px] text-[#74777e]">Jeton cryptographique qualifié eIDAS / PKI FCE</div>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
+            Valide &amp; Scellé
+          </span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="bg-[#eff4ff] p-2.5 rounded border border-[#c4c6ce]">
+            <span class="text-[10px] text-[#74777e] uppercase font-bold">Autorité d'Horodatage (TSA)</span>
+            <div class="font-mono text-[11px] font-bold text-[#001229]">TSA-FCE-PKI-ROOT-CA</div>
+            <div class="text-[10px] text-[#44474d] font-mono">OID: 1.3.6.1.4.1.58923.1.2.1</div>
+          </div>
+          <div class="bg-[#eff4ff] p-2.5 rounded border border-[#c4c6ce]">
+            <span class="text-[10px] text-[#74777e] uppercase font-bold">Empreinte SHA-256</span>
+            <div class="font-mono text-[10px] text-[#001229] break-all bg-white p-1 rounded border border-[#c4c6ce] mt-0.5">
+              e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sceau Dynamique généré par Django -->
+      <div class="bg-white border border-[#c4c6ce] rounded-lg p-5 shadow-xs flex flex-col gap-3">
+        <h3 class="text-[14px] font-bold text-[#001229] flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#0051d5]">image</span>
+          <span>Lien Image Dynamique HTML généré par Django</span>
+        </h3>
+        <p class="text-[11px] text-[#44474d]">
+          Cette balise HTML utilise directement la vue Django <code>dynamic_seal_image_view</code> :
+        </p>
+        <div class="flex items-center justify-center p-4 bg-[#eff4ff] border border-[#c4c6ce] rounded">
+          <img src="{% url 'dynamic-seal-image' %}?date=24+MARS+2026&titre=SCELLE+REGLEMENTAIRE" alt="Sceau Réglementaire FCE" class="w-48 h-48 object-contain">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

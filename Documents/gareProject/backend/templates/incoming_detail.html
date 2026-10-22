@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}GARE FCE — Document Entrant ARR/042{% endblock %}
+
+{% block content %}
+<div class="max-w-[1720px] mx-auto flex flex-col gap-4 pb-12 font-sans select-none">
+  <!-- Fil d'Ariane -->
+  <nav class="flex items-center gap-2 text-[11px] text-[#44474d] font-medium">
+    <a href="{% url 'dashboard' %}" class="hover:text-[#0051d5] flex items-center gap-1">
+      <span class="material-symbols-outlined text-[14px]">home</span>
+      <span>Accueil</span>
+    </a>
+    <span class="material-symbols-outlined text-[12px] text-[#74777e]">chevron_right</span>
+    <a href="{% url 'register' %}" class="hover:text-[#0051d5]">Gestion documentaire</a>
+    <span class="material-symbols-outlined text-[12px] text-[#74777e]">chevron_right</span>
+    <span class="font-mono text-[#0b1c30] font-semibold bg-[#e5eeff] px-1.5 py-0.5 rounded border border-[#c4c6ce]">
+      FCE/DIR/ARR/2026/042
+    </span>
+  </nav>
+
+  <!-- En-tête du document -->
+  <section class="bg-white border border-[#c4c6ce] rounded p-4 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <div class="flex-1">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="font-mono text-[12px] bg-[#0f2744] text-white px-2.5 py-1 rounded font-semibold">
+          FCE/DIR/ARR/2026/042
+        </span>
+        <span class="text-[12px] text-[#44474d]">Ligne FCE PK-54</span>
+      </div>
+      <h1 class="text-[18px] text-[#0b1c30] font-bold">
+        Remplacement traverse métallique PK-54 — Convention tripartite
+      </h1>
+      <div class="flex items-center gap-2 mt-2 text-xs">
+        <span class="px-2.5 py-0.5 rounded bg-amber-50 border border-amber-200 text-amber-900 font-semibold flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
+          En cours de validation / Visa
+        </span>
+        <span class="px-2 py-0.5 rounded bg-[#e5eeff] border border-[#c4c6ce] text-[#0b1c30]">
+          Confidentiel Niveau II
+        </span>
+        <span class="px-2 py-0.5 rounded bg-red-50 border border-red-200 text-red-800 font-medium">
+          Urgent (48h)
+        </span>
+        <span class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium">
+          Scellé SHA-256
+        </span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 shrink-0">
+      <button onclick="alert('Visa électronique apposé avec succès !')" class="h-8 px-3.5 bg-[#0f2744] hover:bg-[#0051d5] text-white rounded text-[12px] font-semibold flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer">
+        <span class="material-symbols-outlined text-[16px]">verified</span>
+        <span>Poser un visa / Valider</span>
+      </button>
+      <a href="{% url 'register' %}" class="h-8 px-2.5 bg-white border border-[#c4c6ce] text-[#0b1c30] hover:bg-[#eff4ff] rounded text-[12px] font-semibold flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        <span>Retour au registre</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 2 Colonnes -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+    <!-- Rendu Feuille Scannée avec Tampon -->
+    <div class="lg:col-span-7 bg-white border border-[#c4c6ce] rounded p-8 shadow-sm relative select-text">
+      <!-- Tampon d'arrivée officiel -->
+      <div class="absolute top-12 right-6 rotate-[-7deg] border border-dashed border-red-700 rounded p-1 bg-red-50/70 shadow-sm">
+        <img src="{% url 'dynamic-stamp-image' %}?date=24+MARS+2026&enr=ENR+N+042" alt="Tampon ARR Officiel" class="w-56 object-contain">
+      </div>
+
+      <!-- En-tête -->
+      <div class="text-center border-b pb-3 border-slate-400">
+        <p class="font-bold text-[10px] uppercase font-sans text-slate-700">REPOBLIKAN'I MADAGASIKARA</p>
+        <p class="italic text-[9px] text-slate-600 font-sans">Fitiavana — Tanindrazana — Fandrosoana</p>
+        <div class="h-0.5 w-16 bg-slate-800 mx-auto my-1.5"></div>
+        <p class="font-extrabold text-[12px] uppercase font-sans text-slate-900">RÉSEAU NATIONAL DES CHEMINS DE FER MALGACHES</p>
+        <p class="font-bold text-[10px] font-sans text-slate-800">LIGNE FIANARANTSOA - CÔTE EST (F.C.E.)</p>
+      </div>
+
+      <!-- Titre Acte -->
+      <div class="mt-6 text-center">
+        <h2 class="font-sans font-black text-sm uppercase underline text-slate-900">
+          CONVENTION D'INTEROPÉRABILITÉ ET D'ENTRETIEN DES TABLIERS MÉTALLIQUES
+        </h2>
+        <p class="font-sans font-bold text-[10px] text-slate-700 mt-1">Section PK-54+200 (Ouvrage d'art n°14)</p>
+      </div>
+
+      <!-- Contenu avec surlignage Madarail -->
+      <div class="mt-6 text-[11px] leading-relaxed text-slate-800 font-serif space-y-3 text-justify">
+        <p>Considérant l'inspection technique décennale conjointe réalisée sur l'ouvrage d'art n°14 au PK-54+200, il est acté d'urgence le remplacement des traverses métalliques corrodées.</p>
+        <p>Les parties contractantes, en concertation avec les services techniques délégués de <mark class="bg-amber-300 px-1 py-0.5 rounded font-bold text-slate-950">Madarail</mark> et le Ministère des Transports, conviennent d'une fermeture temporaire du trafic fret pour une durée de 36 heures.</p>
+      </div>
+
+      <!-- Signatures -->
+      <div class="mt-8 pt-4 border-t border-slate-300 grid grid-cols-2 gap-8 text-center text-xs">
+        <div>
+          <p class="text-[9px] font-bold uppercase text-slate-700">Pour la Direction Régionale TP</p>
+          <div class="h-10 flex items-center justify-center font-serif italic text-base">Rabenanahary</div>
+        </div>
+        <div>
+          <p class="text-[9px] font-bold uppercase text-slate-700">Pour la Direction Générale FCE</p>
+          <div class="h-10 flex items-center justify-center font-bold text-xs text-[#0051d5]">Le Secrétaire Général FCE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métadonnées Administratives -->
+    <div class="lg:col-span-5 flex flex-col gap-4 text-xs">
+      <div class="bg-white border border-[#c4c6ce] rounded p-4 shadow-xs space-y-3">
+        <h3 class="font-bold text-[#001229] border-b pb-2 flex items-center gap-1.5 text-[13px]">
+          <span class="material-symbols-outlined text-[#0051d5]">badge</span>
+          <span>Identification Administrative</span>
+        </h3>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div><span class="text-[#74777e] block">Date acte :</span> <strong>23/03/2026</strong></div>
+          <div><span class="text-[#74777e] block">Réception GARE :</span> <strong>24/03/2026 08:15</strong></div>
+          <div class="col-span-2"><span class="text-[#74777e] block">Expéditeur :</span> <strong>DRTP Vatovavy-Fitovinany</strong></div>
+          <div class="col-span-2"><span class="text-[#74777e] block">Service :</span> <strong class="text-[#0051d5]">Dir. Voies &amp; Bâtiments (DVB)</strong></div>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#c4c6ce] rounded p-4 shadow-xs space-y-2">
+        <h3 class="font-bold text-[#001229] border-b pb-2 flex items-center gap-1.5 text-[13px]">
+          <span class="material-symbols-outlined text-[#0051d5]">linear_scale</span>
+          <span>Circuit de Validation (Étape 8 / 11)</span>
+        </h3>
+        <div class="w-full bg-[#eff4ff] h-2 rounded overflow-hidden">
+          <div class="bg-[#0051d5] h-full w-[72%]"></div>
+        </div>
+        <p class="text-[11px] text-[#44474d]">En attente d'approbation et signature par Dr. Hery Rasolofo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

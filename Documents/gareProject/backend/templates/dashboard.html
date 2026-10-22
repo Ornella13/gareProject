@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GARE FCE — Tableau de Bord{% endblock %}
+
+{% block content %}
+<div class="max-w-[1720px] mx-auto flex flex-col gap-5 pb-12 font-sans select-none">
+  <!-- Banner -->
+  <div class="bg-gradient-to-r from-[#001229] via-[#0f2744] to-[#0051d5] text-white p-6 rounded-lg shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="px-2 py-0.5 rounded bg-white/20 text-white font-mono text-[10px] font-bold">FCE EXERCICE 2026</span>
+        <span class="text-emerald-300 text-[11px] flex items-center gap-1 font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Système d'archivage et de registre en service
+        </span>
+      </div>
+      <h1 class="text-[22px] font-bold">Système GARE FCE — Actes Officiels et Archives Probantes</h1>
+      <p class="text-[13px] text-[#cbdbf5]">Gestion électronique des actes réglementaires, décrets et archives ferroviaires avec scellement probant WORM.</p>
+    </div>
+    <a href="{% url 'document_create' %}" class="h-10 px-4 bg-white text-[#001229] hover:bg-[#eff4ff] rounded font-semibold text-[13px] flex items-center gap-2 shadow-sm transition-all shrink-0">
+      <span class="material-symbols-outlined text-[18px]">add_circle</span>
+      <span>Nouvelle entrée FCE</span>
+    </a>
+  </div>
+
+
+
+  <!-- Section Classement Principal : Les 5 Catégories FCE -->
+  <div class="bg-white border border-[#c4c6ce] rounded-lg p-5 shadow-xs">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-[16px] font-bold text-[#001229] flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#0051d5]">folder_shared</span>
+          <span>Classement Principal des Dossiers à Archiver (Plan FCE)</span>
+        </h2>
+        <p class="text-[11px] text-[#74777e]">
+          Accès thématique aux 5 séries archivistiques réglementaires de la compagnie
+        </p>
+      </div>
+      <a href="{% url 'document_list' %}" class="text-xs text-[#0051d5] hover:underline font-semibold flex items-center gap-1">
+        <span>Voir tout le registre</span>
+        <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      {% for cat_id, count in cat_counts.items %}
+        <a href="{% url 'document_list' %}?cat={{ cat_id }}" class="p-3 bg-[#f8f9ff] hover:bg-[#eff4ff] border border-[#c4c6ce] hover:border-[#0051d5] rounded transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="w-6 h-6 rounded bg-[#001229] text-white flex items-center justify-center font-mono font-bold text-xs">{{ cat_id }}</span>
+              <span class="material-symbols-outlined text-[#74777e] text-[18px]">
+                {% if cat_id == '01' %}gavel{% elif cat_id == '02' %}description{% elif cat_id == '03' %}tag{% elif cat_id == '04' %}share{% else %}article{% endif %}
+              </span>
+            </div>
+            <div class="font-bold text-xs text-[#001229]">
+              {% if cat_id == '01' %}Décisions{% elif cat_id == '02' %}Notes de service{% elif cat_id == '03' %}Chrono interne{% elif cat_id == '04' %}Chrono externe{% else %}Procès-verbaux{% endif %}
+            </div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-[#c4c6ce]/30 flex items-center justify-between text-[11px]">
+            <span class="text-[#74777e]">Dossiers :</span>
+            <span class="font-mono font-bold text-[#0051d5]">{{ count }}</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Métriques & Activités -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+    <div class="lg:col-span-7 bg-white border border-[#c4c6ce] rounded-lg p-5 shadow-xs">
+      <h3 class="text-[14px] font-bold text-[#001229] mb-3 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0051d5]">dns</span>
+        <span>Magasin Optique WORM (Non-réinscriptible)</span>
+      </h3>
+      <div class="grid grid-cols-3 gap-3 mb-3 text-xs">
+        <div class="bg-[#eff4ff] p-3 rounded border border-[#c4c6ce]">
+          <span class="text-[10px] text-[#74777e] uppercase font-bold">Actes Enregistrés</span>
+          <div class="text-[16px] font-bold text-[#0051d5] font-mono mt-0.5">{{ total_docs }} documents</div>
+        </div>
+        <div class="bg-[#eff4ff] p-3 rounded border border-[#c4c6ce]">
+          <span class="text-[10px] text-[#74777e] uppercase font-bold">Empreintes SHA-256</span>
+          <div class="text-[16px] font-bold text-emerald-800 font-mono mt-0.5">100% Intègres</div>
+        </div>
+        <div class="bg-[#eff4ff] p-3 rounded border border-[#c4c6ce]">
+          <span class="text-[10px] text-[#74777e] uppercase font-bold">Conservation</span>
+          <div class="text-[16px] font-bold text-[#001229] font-mono mt-0.5">Baie-04 WORM</div>
+        </div>
+      </div>
+      <div class="w-full bg-[#eff4ff] h-2 rounded-full overflow-hidden mb-1">
+        <div class="bg-[#0051d5] h-full rounded-full" style="width: 28%"></div>
+      </div>
+      <span class="text-[11px] text-[#74777e]">Contrôle périodique de redondance et intégrité : Validé</span>
+    </div>
+
+    <div class="lg:col-span-5 bg-white border border-[#c4c6ce] rounded-lg p-5 shadow-xs">
+      <h3 class="text-[14px] font-bold text-[#001229] mb-3 flex items-center justify-between">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#0051d5]">traffic</span>
+          <span>Sécurité Ligne et Voies</span>
+        </span>
+        <span class="text-emerald-700 text-xs font-semibold">Trafic Régulier</span>
+      </h3>
+      <div class="space-y-2 text-xs">
+        <div class="p-2.5 bg-[#eff4ff] rounded border border-[#c4c6ce] flex items-center justify-between">
+          <div>
+            <span class="font-bold text-[#001229]">Point Kilométrique 54 (PK-54)</span>
+            <div class="text-[11px] text-[#44474d]">Limitation vitesse 30 km/h en vigueur</div>
+          </div>
+          <span class="px-2 py-0.5 bg-amber-50 text-amber-900 border border-amber-200 rounded text-[10px] font-bold">Travaux</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

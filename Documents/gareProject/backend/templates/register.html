@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% block title %}GARE FCE — Gestion des Archives (5 Catégories){% endblock %}
+
+{% block content %}
+<div class="max-w-[1720px] mx-auto flex flex-col gap-6 pb-20 font-sans select-none">
+  <!-- Messages de notification Django -->
+  {% if messages %}
+    <div class="space-y-2">
+      {% for message in messages %}
+        <div class="p-3.5 rounded-xl text-xs font-semibold flex items-center justify-between {% if message.tags == 'success' %}bg-emerald-50 text-emerald-900 border border-emerald-300{% else %}bg-blue-50 text-blue-900 border border-blue-300{% endif %}">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">check_circle</span>
+            <span>{{ message }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- En-tête avec Bannière Bleue Royale (Style Tableau de Bord FCE) -->
+  <div class="bg-gradient-to-r from-[#001229] via-[#0f2744] to-[#0051d5] text-white p-6 rounded-xl flex flex-col lg:flex-row lg:items-center justify-between gap-5 shadow-sm">
+    <div>
+      <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+        <span class="px-2 py-0.5 rounded bg-white/20 text-white font-mono text-[10px] font-bold">FCE EXERCICE 2026</span>
+        <span class="text-emerald-300 text-[11px] flex items-center gap-1 font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Registre Officiel FCE • 5 Séries Réglementaires
+        </span>
+      </div>
+      <h1 class="text-[22px] font-bold text-white tracking-tight">
+        Gestion des Archives FCE — 5 Catégories Documentaires
+      </h1>
+      <p class="text-[13px] text-[#cbdbf5] max-w-3xl mt-1">
+        Numérisez, enregistrez et consultez les documents scannés originaux pour les 5 catégories réglementaires FCE.
+      </p>
+    </div>
+
+    <!-- Actions & Filtre par Année -->
+    <div class="flex items-center gap-3 flex-wrap shrink-0">
+      <!-- Filtre par Année : Liste déroulante de 2023 à l'année actuelle -->
+      <div class="flex items-center gap-2 bg-white/10 backdrop-blur-xs border border-white/20 rounded-lg px-3 py-1.5 shadow-xs">
+        <label for="year-select" class="text-[11px] font-bold text-[#cbdbf5] flex items-center gap-1 uppercase tracking-wider cursor-pointer">
+          <span class="material-symbols-outlined text-[16px]">calendar_month</span>
+          <span>Année :</span>
+        </label>
+        <form method="get" action="{% url 'document_list' %}" class="inline-block m-0 p-0">
+          {% if selected_category %}
+            <input type="hidden" name="cat" value="{{ selected_category }}">
+          {% endif %}
+          {% if search_query %}
+            <input type="hidden" name="q" value="{{ search_query }}">
+          {% endif %}
+          <select 
+            id="year-select"
+            name="year" 
+            onchange="this.form.submit()" 
+            class="h-8 px-2.5 bg-white text-[#001229] rounded-md border-0 text-xs font-bold focus:ring-2 focus:ring-[#0051d5] focus:outline-none cursor-pointer shadow-xs"
+          >
+            <option value="" {% if not request.GET.year %}selected{% endif %}>Toutes les années (2023–2026)</option>
+            <option value="2026" {% if request.GET.year == '2026' %}selected{% endif %}>2026</option>
+            <option value="2025" {% if request.GET.year == '2025' %}selected{% endif %}>2025</option>
+            <option value="2024" {% if request.GET.year == '2024' %}selected{% endif %}>2024</option>
+            <option value="2023" {% if request.GET.year == '2023' %}selected{% endif %}>2023</option>
+          </select>
+        </form>
+      </div>
+
+      <!-- Bouton d'upload très clair pour les secrétaires (Bouton Blanc comme photo 3) -->
+      <a 
+        href="{% url 'document_create' %}{% if selected_category %}?cat={{ selected_category }}{% endif %}" 
+        class="h-10 px-4 bg-white text-[#001229] hover:bg-[#eff4ff] rounded-lg font-semibold text-[13px] flex items-center gap-2 shadow-sm transition-all shrink-0 cursor-pointer font-bold"
+      >
+        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+        <span>+ Ajouter un document</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Bannière de recherche active depuis le bandeau supérieur -->
+  {% if search_query %}
+    <div class="flex items-center justify-between px-4 py-2.5 bg-[#eff4ff] border border-[#c4c6ce] rounded-xl text-xs shadow-2xs">
+      <div class="flex items-center gap-2 text-[#001229]">
+        <span class="material-symbols-outlined text-[#0051d5] text-[20px]">search</span>
+        <span>
+          Recherche active depuis le bandeau supérieur : <strong class="font-mono text-[#0051d5] bg-white px-2 py-0.5 rounded border border-[#c4c6ce]">"{{ search_query }}"</strong>
+        </span>
+        <span class="text-[#74777e] text-[11px]">
+          ({{ total_count|default:"1" }} document{{ total_count|pluralize }} trouvé{{ total_count|pluralize }})
+        </span>
+      </div>
+      <a 
+        href="{% url 'document_list' %}{% if selected_category %}?cat={{ selected_category }}{% endif %}" 
+        class="text-xs text-[#74777e] hover:text-red-700 flex items-center gap-1 font-semibold cursor-pointer px-2 py-1 rounded hover:bg-white transition-colors"
+      >
+        <span>Effacer la recherche</span>
+        <span class="material-symbols-outlined text-[16px]">close</span>
+      </a>
+    </div>
+  {% endif %}
+
+  <!-- Sélecteur des 5 Catégories Documentaires (Structure Unifiée) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+    {% for cat in categories_info %}
+      <a 
+        href="{% url 'document_list' %}?cat={{ cat.id }}" 
+        class="p-4 rounded-xl border transition-all flex flex-col justify-between cursor-pointer {% if selected_category == cat.id %}border-2 border-[#0051d5] bg-[#eff4ff] shadow-sm ring-1 ring-[#0051d5]/40{% else %}border-[#c4c6ce] bg-white hover:border-[#0051d5] hover:bg-[#f8f9ff]{% endif %}"
+      >
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-xs {% if selected_category == cat.id %}bg-[#0051d5] text-white{% else %}bg-[#001229] text-white{% endif %}">
+              {{ cat.id }}
+            </span>
+            <span class="material-symbols-outlined text-[20px] text-[#74777e]">{{ cat.icon }}</span>
+          </div>
+          <div class="font-bold text-[14px] text-[#001229] leading-snug">{{ cat.nom }}</div>
+          <p class="text-[11px] text-[#74777e] mt-1 leading-snug">{{ cat.desc }}</p>
+        </div>
+        <div class="mt-4 pt-2.5 border-t border-[#c4c6ce]/30 flex items-center justify-between text-[11px]">
+          <span class="text-[#74777e]">Documents :</span>
+          <span class="font-mono font-bold text-[#0051d5] text-xs">{{ cat.count }}</span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+  <!-- Bandeau d'action rapide spécifique à la catégorie sélectionnée -->
+  {% if selected_category %}
+    <div class="bg-white border border-[#c4c6ce] px-5 py-3.5 rounded-xl flex items-center justify-between shadow-xs">
+      <div class="flex items-center gap-2.5 text-xs text-[#001229]">
+        <span class="material-symbols-outlined text-[#0051d5] text-[20px]">folder_open</span>
+        <span>
+          Catégorie active : <strong>Catégorie {{ selected_category }}</strong>
+          {% if search_query %} • Mot recherché : « <strong>{{ search_query }}</strong> »{% endif %}
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a 
+          href="{% url 'document_create' %}?cat={{ selected_category }}" 
+          class="h-8 px-3.5 bg-[#0051d5] hover:bg-[#316bf3] text-white rounded text-xs font-bold flex items-center gap-1.5 transition-colors"
+        >
+          <span class="material-symbols-outlined text-[16px]">add_circle</span>
+          <span>Ajouter dans la catégorie {{ selected_category }}</span>
+        </a>
+        <a href="{% url 'document_list' %}" class="text-[#74777e] hover:text-[#001229] text-xs font-semibold">
+          Tout afficher
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Table Principale des Documents Scannés Originaux -->
+  <div class="bg-white border border-[#c4c6ce] rounded-xl overflow-hidden shadow-xs">
+    <div class="p-3.5 bg-[#f8f9ff] border-b border-[#c4c6ce] flex items-center justify-between text-xs text-[#74777e]">
+      <span class="font-semibold text-[#001229]">
+        {{ documents|length }} document(s) trouvé(s)
+      </span>
+      <span class="font-mono text-[11px]">Documents scannés originaux préservés intégralement</span>
+    </div>
+
+    <table class="w-full text-left text-xs border-collapse">
+      <thead class="bg-[#eff4ff] text-[#44474d] font-semibold border-b border-[#c4c6ce]">
+        <tr>
+          <th class="py-3 px-3 w-14 text-center">N°</th>
+          <th class="py-3 px-3">Chrono Officiel</th>
+          <th class="py-3 px-3">Objet &amp; Titre du Document</th>
+          <th class="py-3 px-3">Catégorie</th>
+          <th class="py-3 px-3">Document Original</th>
+          <th class="py-3 px-3">Date</th>
+          <th class="py-3 px-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#e5eeff]">
+        {% for doc in documents %}
+          <tr class="hover:bg-[#f8f9ff] transition-colors">
+            <!-- N° Catégorie -->
+            <td class="py-3.5 px-3 text-center">
+              <span class="font-mono font-bold text-xs bg-[#e5eeff] text-[#0051d5] px-2 py-0.5 rounded border border-[#c4c6ce]">
+                {{ doc.classement }}
+              </span>
+            </td>
+
+            <!-- Chrono & Cote -->
+            <td class="py-3.5 px-3">
+              <a href="{% url 'document_detail' doc.pk %}" class="font-mono font-bold text-[#0051d5] hover:underline block">
+                {{ doc.chrono }}
+              </a>
+              <span class="text-[10px] text-[#74777e] font-mono">{{ doc.cote }}</span>
+            </td>
+
+            <!-- Titre & Recherche OCR -->
+            <td class="py-3.5 px-3 max-w-lg">
+              <a href="{% url 'document_detail' doc.pk %}" class="font-bold text-[#001229] hover:text-[#0051d5] block leading-snug">
+                {{ doc.title }}
+              </a>
+              <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                <span class="text-[10px] text-[#74777e]">{{ doc.service_emetteur }}</span>
+                {% if search_query and doc.ocr_content %}
+                  <span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[13px] text-amber-700">document_scanner</span>
+                    <span>Trouvé dans le texte scanné</span>
+                  </span>
+                {% endif %}
+              </div>
+
+              <!-- Extrait OCR avec phrase correspondante -->
+              {% if search_query and doc.ocr_content %}
+                <div class="mt-2 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 flex items-start gap-2 shadow-2xs">
+                  <span class="material-symbols-outlined text-amber-700 text-[17px] shrink-0 mt-0.5">travel_explore</span>
+                  <div class="text-[11px] leading-relaxed">
+                    <span class="font-semibold text-amber-900">Extrait du scan : </span>
+                    <span class="font-mono text-[11px] text-slate-800">
+                      « ...{{ doc.ocr_content|slice:":120" }}... »
+                    </span>
+                  </div>
+                </div>
+              {% endif %}
+            </td>
+
+            <!-- Nom Catégorie -->
+            <td class="py-3.5 px-3 font-semibold text-[#001229]">
+              {{ doc.get_classement_display|slice:":25" }}
+            </td>
+
+            <!-- Document Original Attaché -->
+            <td class="py-3.5 px-3">
+              {% if doc.fichier_original %}
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-semibold">
+                  <span class="material-symbols-outlined text-[14px]">attach_file</span>
+                  <span>Original scanné</span>
+                </span>
+              {% else %}
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-50 text-slate-600 border border-slate-200 text-[11px]">
+                  <span>Notice officielle</span>
+                </span>
+              {% endif %}
+            </td>
+
+            <!-- Date -->
+            <td class="py-3.5 px-3 font-mono text-[11px] text-[#44474d]">
+              {{ doc.date_acte|date:"d/m/Y" }}
+            </td>
+
+            <!-- Actions pour secrétaire -->
+            <td class="py-3.5 px-3 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <a 
+                  href="{% url 'document_detail' doc.pk %}" 
+                  class="p-1.5 rounded hover:bg-[#eff4ff] text-[#0051d5] transition-colors" 
+                  title="Consulter le document original"
+                >
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </a>
+
+                {% if doc.fichier_original %}
+                  <a 
+                    href="{% url 'document_download_original' doc.pk %}" 
+                    class="p-1.5 rounded hover:bg-emerald-50 text-emerald-700 transition-colors" 
+                    title="Télécharger le document scanné original"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                  </a>
+                {% endif %}
+
+                <a 
+                  href="{% url 'document_update' doc.pk %}" 
+                  class="p-1.5 rounded hover:bg-[#eff4ff] text-[#74777e] hover:text-[#001229] transition-colors" 
+                  title="Modifier"
+                >
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </a>
+
+                <a 
+                  href="{% url 'document_delete' doc.pk %}" 
+                  class="p-1.5 rounded hover:bg-red-50 text-red-600 transition-colors" 
+                  title="Supprimer"
+                >
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" class="py-12 text-center text-[#74777e]">
+              <div class="w-14 h-14 rounded-full bg-[#f8f9ff] border border-[#c4c6ce] flex items-center justify-center mx-auto mb-3 text-[#74777e]">
+                <span class="material-symbols-outlined text-[28px]">search_off</span>
+              </div>
+              <p class="font-bold text-sm text-[#001229]">Aucun document ne correspond à cette recherche.</p>
+              <p class="text-xs text-[#74777e] mt-1">Vous pouvez ajouter un nouveau document scanné dès maintenant.</p>
+              <div class="mt-4">
+                <a 
+                  href="{% url 'document_create' %}{% if selected_category %}?cat={{ selected_category }}{% endif %}" 
+                  class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 text-white rounded-lg text-xs font-bold hover:bg-emerald-800 transition-colors"
+                >
+                  <span class="material-symbols-outlined text-[18px]">upload_file</span>
+                  <span>+ Ajouter un document</span>
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

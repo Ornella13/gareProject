@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}GARE FCE — {{ title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-[860px] mx-auto flex flex-col gap-6 pb-20 font-sans select-none">
+  <!-- Fil d'Ariane simple -->
+  <nav class="flex items-center gap-2 text-[12px] text-[#74777e] font-medium">
+    <a href="{% url 'dashboard' %}" class="hover:text-[#001229] flex items-center gap-1">
+      <span class="material-symbols-outlined text-[16px]">home</span>
+      <span>Accueil</span>
+    </a>
+    <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+    <a href="{% url 'document_list' %}" class="hover:text-[#001229]">Gestion des Archives</a>
+    <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+    <span class="text-[#0051d5] font-semibold">{{ title }}</span>
+  </nav>
+
+  <!-- En-tête convivial pour secrétaire -->
+  <div class="bg-white border border-[#c4c6ce] p-6 rounded-xl flex items-center justify-between shadow-xs">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-[#eff4ff] text-[#0051d5] flex items-center justify-center border border-[#c4c6ce]/60 shadow-xs">
+        <span class="material-symbols-outlined text-[28px]">upload_file</span>
+      </div>
+      <div>
+        <h1 class="text-[20px] font-bold text-[#001229]">{{ title }}</h1>
+        <p class="text-[13px] text-[#74777e] mt-0.5">
+          Déposez le document scanné (PDF ou image) puis cliquez sur Enregistrer.
+        </p>
+      </div>
+    </div>
+    <a href="{% url 'document_list' %}" class="px-4 py-2 bg-[#f8f9ff] text-[#44474d] hover:text-[#001229] hover:bg-[#eff4ff] border border-[#c4c6ce] rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors">
+      <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+      <span>Retour à la liste</span>
+    </a>
+  </div>
+
+  <!-- Formulaire d'ajout sécurisé -->
+  <form method="post" enctype="multipart/form-data" class="bg-white border border-[#c4c6ce] p-7 rounded-xl shadow-xs flex flex-col gap-6 select-text">
+    {% csrf_token %}
+
+    <!-- 1. ZONE DE DÉPÔT / UPLOAD DU DOCUMENT SCANNÉ ORIGINAL -->
+    <div>
+      <label class="block text-xs font-bold uppercase tracking-wider text-[#001229] mb-2 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[18px] text-[#0051d5]">scanner</span>
+        <span>1. Document scanné original (PDF ou Image) *</span>
+      </label>
+
+      <div 
+        id="drop_zone"
+        onclick="document.getElementById('file_upload_input').click()"
+        class="border-2 border-dashed border-[#0051d5]/40 hover:border-[#0051d5] bg-[#f8f9ff] hover:bg-[#eff4ff] rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all group"
+      >
+        <div class="w-14 h-14 rounded-full bg-white border border-[#c4c6ce]/60 shadow-xs flex items-center justify-center text-[#0051d5] group-hover:scale-105 transition-transform mb-3">
+          <span class="material-symbols-outlined text-[32px]">cloud_upload</span>
+        </div>
+        <p class="text-sm font-bold text-[#001229]">
+          Cliquez ici pour choisir le document scanné, ou glissez-déposez le fichier
+        </p>
+        <p class="text-xs text-[#74777e] mt-1">
+          Formats acceptés : PDF scanné, PNG, JPG, JPEG (Le document est conservé intégralement tel quel)
+        </p>
+        {{ form.fichier_original }}
+      </div>
+
+      <!-- Badge de fichier sélectionné & Aperçu interactif -->
+      <div id="file_preview_container" class="hidden mt-3 p-4 bg-[#eff4ff] border border-[#0051d5]/30 rounded-lg flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#0051d5] text-[22px]">description</span>
+            <div>
+              <div id="selected_file_name" class="font-bold text-xs text-[#001229] font-mono">nom_du_fichier.pdf</div>
+              <div id="selected_file_size" class="text-[11px] text-[#74777e]">Taille : 0 Ko</div>
+            </div>
+          </div>
+          <button 
+            type="button" 
+            onclick="clearSelectedFile(event)"
+            class="text-xs text-red-600 hover:text-red-800 font-semibold px-2 py-1 rounded hover:bg-white transition-colors"
+          >
+            Changer de fichier
+          </button>
+        </div>
+
+        <!-- Aperçu miniature (pour images) -->
+        <div id="image_preview_box" class="hidden pt-2 border-t border-[#0051d5]/20">
+          <span class="text-[11px] font-semibold text-[#44474d] block mb-1">Aperçu du document scanné :</span>
+          <img id="image_preview_elem" src="" alt="Aperçu scanné" class="max-h-48 rounded border border-gray-300 shadow-xs object-contain bg-white mx-auto">
+        </div>
+      </div>
+
+      {% if form.fichier_original.errors %}
+        <p class="text-red-600 text-xs mt-1.5 font-medium">{{ form.fichier_original.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- 2. CATÉGORIE DU DOCUMENT (01 à 05) -->
+    <div class="border-t border-[#c4c6ce]/60 pt-5">
+      <label class="block text-xs font-bold uppercase tracking-wider text-[#001229] mb-2 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[18px] text-[#0051d5]">folder</span>
+        <span>2. Catégorie officielle *</span>
+      </label>
+      {{ form.classement }}
+      {% if form.classement.errors %}
+        <p class="text-red-600 text-xs mt-1">{{ form.classement.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- 3. INFORMATIONS ESSENTIELLES DU DOCUMENT -->
+    <div class="border-t border-[#c4c6ce]/60 pt-5 flex flex-col gap-4">
+      <label class="block text-xs font-bold uppercase tracking-wider text-[#001229] flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[18px] text-[#0051d5]">edit_note</span>
+        <span>3. Informations sur le document</span>
+      </label>
+
+      <!-- Titre / Objet -->
+      <div>
+        <label class="block text-xs font-bold text-[#44474d] mb-1">
+          Objet / Titre du document * :
+        </label>
+        {{ form.title }}
+        {% if form.title.errors %}
+          <p class="text-red-600 text-xs mt-1">{{ form.title.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Date de l'acte et Référence chrono -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-[#44474d] mb-1">
+            Date du document original * :
+          </label>
+          {{ form.date_acte }}
+          {% if form.date_acte.errors %}
+            <p class="text-red-600 text-xs mt-1">{{ form.date_acte.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#44474d] mb-1">
+            Numéro / Référence Chrono :
+          </label>
+          {{ form.chrono }}
+          {% if form.chrono.errors %}
+            <p class="text-red-600 text-xs mt-1 font-medium">{{ form.chrono.errors.0 }}</p>
+          {% endif %}
+          <p class="text-[11px] text-[#74777e] mt-1">Laisser vide pour générer un numéro automatique officiel.</p>
+        </div>
+      </div>
+
+      <!-- Émetteur et Destinataire (facultatifs / pré-remplis) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#44474d] mb-1">
+            Service émetteur :
+          </label>
+          {{ form.service_emetteur }}
+        </div>
+      <!-- Destinataire (laissé vide par défaut) -->
+      <div>
+        <label class="block text-xs font-semibold text-[#44474d] mb-1">
+          Destinataire :
+        </label>
+        {{ form.service_destinataire }}
+      </div>
+
+      <!-- Champ masqué de traitement -->
+      <div class="hidden">
+        {{ form.ocr_content }}
+      </div>
+    </div>
+
+    <!-- BOUTONS D'ACTION -->
+    <div class="border-t border-[#c4c6ce] pt-5 flex items-center justify-between">
+      <a href="{% url 'document_list' %}" class="px-5 py-2.5 bg-white text-[#74777e] hover:text-[#001229] border border-[#c4c6ce] rounded-lg text-sm font-semibold transition-colors">
+        Annuler
+      </a>
+      <button 
+        type="submit" 
+        id="submit_btn"
+        class="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-sm font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+      >
+        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+        <span>Enregistrer le document</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  const fileInput = document.getElementById('file_upload_input');
+  const previewContainer = document.getElementById('file_preview_container');
+  const fileNameElem = document.getElementById('selected_file_name');
+  const fileSizeElem = document.getElementById('selected_file_size');
+  const imagePreviewBox = document.getElementById('image_preview_box');
+  const imagePreviewElem = document.getElementById('image_preview_elem');
+  const dropZone = document.getElementById('drop_zone');
+
+  if (fileInput) {
+    fileInput.addEventListener('change', function(e) {
+      if (this.files && this.files[0]) {
+        handleFileSelect(this.files[0]);
+      }
+    });
+
+    // Drag and drop support
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('border-[#0051d5]', 'bg-[#eff4ff]');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('border-[#0051d5]', 'bg-[#eff4ff]');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files && files[0]) {
+        fileInput.files = files;
+        handleFileSelect(files[0]);
+      }
+    }, false);
+  }
+
+  function handleFileSelect(file) {
+    previewContainer.classList.remove('hidden');
+    fileNameElem.textContent = file.name;
+    const kb = (file.size / 1024).toFixed(1);
+    fileSizeElem.textContent = 'Taille : ' + (kb > 1024 ? (kb / 1024).toFixed(2) + ' Mo' : kb + ' Ko');
+
+    // L'objet et le destinataire restent vides par défaut comme demandé
+
+    // Prévisualisation pour images
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imagePreviewElem.src = e.target.result;
+        imagePreviewBox.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      imagePreviewBox.classList.add('hidden');
+    }
+  }
+
+  function clearSelectedFile(e) {
+    e.stopPropagation();
+    fileInput.value = '';
+    previewContainer.classList.add('hidden');
+    imagePreviewBox.classList.add('hidden');
+    imagePreviewElem.src = '';
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}GARE FCE — Visualiseur Décision 015{% endblock %}
+
+{% block content %}
+<div class="max-w-[1720px] mx-auto flex flex-col gap-4 pb-12 font-sans select-none">
+  <!-- Fil d'Ariane & Actions -->
+  <div class="bg-white border-b border-[#c4c6ce] px-6 py-2.5 flex items-center justify-between rounded-lg shadow-xs">
+    <nav class="flex items-center gap-2 text-[11px] text-[#44474d] font-medium">
+      <a href="{% url 'dashboard' %}" class="hover:text-[#0051d5] flex items-center gap-1">
+        <span class="material-symbols-outlined text-[14px]">home</span>
+        <span>Accueil</span>
+      </a>
+      <span class="material-symbols-outlined text-[12px] text-[#74777e]">chevron_right</span>
+      <a href="{% url 'register' %}" class="hover:text-[#0051d5]">Registre des Décisions</a>
+      <span class="material-symbols-outlined text-[12px] text-[#74777e]">chevron_right</span>
+      <span class="font-mono text-[#0b1c30] font-semibold bg-[#e5eeff] px-1.5 py-0.5 rounded border border-[#c4c6ce]">
+        FCE/DG/DEC/2026/015
+      </span>
+      <span class="material-symbols-outlined text-[12px] text-[#74777e]">chevron_right</span>
+      <span class="text-[#0051d5] font-semibold">Visualiseur d'acte scellé</span>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a href="{% url 'register' %}" class="px-2.5 py-1.5 bg-[#e5eeff] text-[#0b1c30] text-[12px] font-semibold rounded border border-[#c4c6ce] hover:bg-[#dce9ff] transition-colors flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[15px]">arrow_back</span>
+        <span>Retour au registre</span>
+      </a>
+      <button onclick="window.print()" class="px-2.5 py-1.5 bg-white text-[#0b1c30] text-[12px] font-semibold rounded border border-[#c4c6ce] hover:bg-[#eff4ff] transition-colors flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[15px]">print</span>
+        <span>Imprimer</span>
+      </button>
+      <a href="{% url 'export-zip-bundle' 'FCE-DG-DEC-2026-015' %}" class="px-3 py-1.5 bg-[#0051d5] hover:bg-[#316bf3] text-white text-[12px] font-semibold rounded flex items-center gap-1.5 shadow-sm transition-colors">
+        <span class="material-symbols-outlined text-[15px]">download</span>
+        <span>Télécharger l'acte scellé</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Document Title & Badges -->
+  <div class="px-6 py-2 bg-[#eff4ff] border border-[#c4c6ce] rounded-lg flex items-center justify-between shadow-xs">
+    <div class="flex items-center gap-3">
+      <span class="p-1 rounded bg-[#dbe1ff] text-[#001229] font-mono font-semibold text-xs px-2 border border-[#c4c6ce]">
+        PDF/A-1b
+      </span>
+      <h1 class="text-[16px] text-[#001229] font-semibold truncate">
+        Décision FCE/DG/DEC/2026/015 — Organisation maintenance voie et limitation 30 km/h PK-54
+      </h1>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <span class="px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+        Acte Exécutoire Scellé
+      </span>
+      <span class="px-2.5 py-1 rounded bg-[#d3e4fe] text-[#001229] border border-[#c4c6ce]">
+        WORM ISO 15489
+      </span>
+    </div>
+  </div>
+
+  <!-- Dual Pane: Viewer + Legal Certificate -->
+  <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+    <!-- Viewer Canvas -->
+    <div class="xl:col-span-8 bg-white border border-[#c4c6ce] rounded-lg p-8 shadow-sm relative select-text">
+      <!-- Watermark diagonal -->
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.05] select-none rotate-[-35deg]">
+        <div class="text-[#dc2626] font-extrabold text-3xl uppercase tracking-widest text-center leading-loose">
+          DOCUMENT SCELLÉ — ARCHIVE OFFICIELLE FCE<br />
+          COPIE CERTIFIÉE CONFORME — PROBANT ISO 15489<br />
+          NON RÉPUDIABLE • SERVEUR WORM SAHAMBAVY
+        </div>
+      </div>
+
+      <!-- Legal Header -->
+      <div class="text-center border-b-2 border-[#0f2744] pb-4 mb-6">
+        <div class="font-bold text-xs uppercase text-slate-800">REPOBLIKAN'I MADAGASIKARA</div>
+        <div class="text-[10px] italic text-slate-600 mb-1">Fitiavana - Tanindrazana - Fandrosoana</div>
+        <div class="h-0.5 w-12 bg-slate-400 mx-auto my-1"></div>
+        <div class="font-bold text-sm uppercase text-[#001229]">
+          RÉSEAU NATIONAL DES CHEMINS DE FER MALGACHES — FCE
+        </div>
+        <div class="text-xs font-semibold text-slate-700">DIRECTION GÉNÉRALE • ARCHIVES ET ACTES OFFICIELS</div>
+        <div class="text-[10px] font-mono text-slate-500 mt-1">Chrono d'enregistrement scellé : FCE/DG/DEC/2026/015</div>
+      </div>
+
+      <!-- Title -->
+      <div class="text-center my-6">
+        <h2 class="font-bold text-base uppercase text-[#0f2744]">DÉCISION N° 015-2026/FCE/DG</h2>
+        <p class="text-xs font-medium text-slate-700 max-w-xl mx-auto mt-1 italic">
+          Portant organisation du service spécial de maintenance de la voie ferrée et instauration d'une limitation préventive de vitesse de circulation au Point Kilométrique 54 (PK-54).
+        </p>
+      </div>
+
+      <!-- Visas -->
+      <div class="text-xs space-y-2 mb-6 text-justify text-slate-800">
+        <p><strong>LE DIRECTEUR GÉNÉRAL DE LA COMPAGNIE DU CHEMIN DE FER (FCE),</strong></p>
+        <p class="text-[11px] leading-relaxed">
+          <strong>VU</strong> l'Ordonnance n° 60-048 portant organisation des transports ferroviaires d'intérêt public ;<br />
+          <strong>VU</strong> le Décret n° 2018-412 portant statuts et cahier des charges de la ligne ferroviaire (FCE) ;<br />
+          <strong>VU</strong> le Procès-Verbal de reconnaissance technique n° PV-DV-2026/089 dressé le 22 Mars 2026 ;<br />
+          <strong>CONSIDÉRANT</strong> l'impérieuse nécessité de garantir la sécurité absolue des convois voyageurs et marchandises...
+        </p>
+      </div>
+
+      <!-- Dispositif -->
+      <div class="border-t border-slate-200 pt-4 mb-6">
+        <div class="text-center font-bold text-xs uppercase text-[#0f2744] mb-3">D É C I D E :</div>
+        <div class="space-y-4 text-xs text-slate-800">
+          <div>
+            <strong>ARTICLE PREMIER. — </strong>
+            Intervention d'urgence de la Brigade de Voie FCE pour confortement de la plate-forme, remplacement de 40 traverses métalliques et reprofilage du lit de ballast entre le PK-54+100 et le PK-54+600.
+          </div>
+          <div class="p-2.5 bg-slate-50 border-l-2 border-[#0051d5]">
+            <strong>ARTICLE 2. — </strong>
+            À compter du <strong>25 Mars 2026 à 00h00</strong>, la vitesse maximale autorisée est strictement limitée à <mark class="bg-amber-300 px-1 py-0.5 rounded font-bold text-slate-900">30 km/h</mark> sur le secteur du PK-53+800 au PK-54+900.
+          </div>
+          <div>
+            <strong>ARTICLE 3. — </strong>
+            Les services techniques d'exploitation sont chargés de l'application immédiate et de l'affichage réglementaire.
+          </div>
+        </div>
+      </div>
+
+      <!-- Signatures & Sceau Django -->
+      <div class="mt-8 pt-4 flex justify-between items-end">
+        <div class="text-[9px] text-slate-500">
+          <div class="font-mono font-semibold text-slate-700">ID: FCE-DG-2026-015</div>
+          <div>Scellé conforme WORM.</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs text-slate-700">Fait le 24 Mars 2026</div>
+          <div class="text-xs font-bold text-[#0f2744] mt-1">Le Directeur Général de la FCE,</div>
+          <!-- Image dynamique Django -->
+          <div class="my-2 inline-block">
+            <img src="{% url 'dynamic-seal-image' %}?date=24+MARS+2026" alt="Sceau FCE" class="w-24 h-24 object-contain">
+          </div>
+          <div class="font-bold text-xs text-slate-900">Dr. Hery RASOLOFO</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aside Métadonnées -->
+    <div class="xl:col-span-4 bg-white border border-[#c4c6ce] rounded-lg p-5 shadow-sm space-y-4 text-xs">
+      <div class="border-b border-[#c4c6ce] pb-2">
+        <h3 class="font-bold text-[#001229] text-[13px] flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[#0051d5]">verified_user</span>
+          <span>Certificat de Scellement Légal</span>
+        </h3>
+      </div>
+      <dl class="space-y-2 text-xs">
+        <div class="flex justify-between pb-1 border-b border-[#e5eeff]">
+          <dt class="text-[#74777e]">Chrono Officiel :</dt>
+          <dd class="font-mono font-bold text-[#001229]">FCE/DG/DEC/2026/015</dd>
+        </div>
+        <div class="flex justify-between pb-1 border-b border-[#e5eeff]">
+          <dt class="text-[#74777e]">Service :</dt>
+          <dd class="font-semibold text-[#001229]">Direction Générale FCE</dd>
+        </div>
+        <div class="flex justify-between pb-1 border-b border-[#e5eeff]">
+          <dt class="text-[#74777e]">Horodatage :</dt>
+          <dd class="font-mono text-[#001229]">24/03/2026 10:19:14 UTC+3</dd>
+        </div>
+      </dl>
+      <div class="p-2.5 bg-[#eff4ff] border border-[#c4c6ce] rounded">
+        <span class="text-[10px] text-[#74777e] uppercase font-bold block mb-1">Hash SHA-256 :</span>
+        <div class="font-mono text-[10px] text-[#001229] break-all bg-white p-1.5 rounded border border-[#c4c6ce]">
+          e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

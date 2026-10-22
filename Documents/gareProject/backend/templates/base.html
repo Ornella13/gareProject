@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-[#f8f9ff] text-[#0b1c30]">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}GARE FCE — Système d'Archivage et Actes Réglementaires{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.ico">
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#001229',
+            'primary-container': '#0f2744',
+            secondary: '#0051d5',
+            'secondary-container': '#316bf3',
+            surface: '#f8f9ff',
+            'surface-container': '#e5eeff',
+            'surface-container-low': '#eff4ff',
+            'surface-container-high': '#dce9ff',
+            'outline-variant': '#c4c6ce',
+            outline: '#74777e',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+    }
+    .watermark-pattern {
+      background-image: repeating-linear-gradient(45deg, rgba(15, 39, 68, 0.015) 0, rgba(15, 39, 68, 0.015) 1px, transparent 0, transparent 40px);
+    }
+    .archival-sheet {
+      box-shadow: 0 4px 6px -1px rgba(15, 39, 68, 0.08), 0 2px 4px -2px rgba(15, 39, 68, 0.06);
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full font-sans antialiased flex flex-col bg-[#f8f9ff] text-[#0b1c30]">
+
+  <!-- ========================================================================= -->
+  <!-- 1. SIDEBAR (Navigation Permanente FCE)                                     -->
+  <!-- ========================================================================= -->
+  <aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-[#001229] border-r border-[#c4c6ce]/30 flex flex-col justify-between py-4 px-3 select-none text-white shrink-0">
+    <div class="flex flex-col gap-3">
+      <!-- Brand FCE avec Logo Officiel (Depuis 1936) -->
+      <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-2 py-1 group">
+        <div class="w-12 h-10 rounded-md overflow-hidden bg-white border border-[#c4c6ce]/40 flex items-center justify-center shadow-sm group-hover:border-[#0051d5] transition-all shrink-0 p-0.5">
+          <img src="{% url 'fce_logo' %}" alt="Logo FCE" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='{% static 'fce-logo.jpg' %}';">
+        </div>
+        <div class="flex flex-col">
+          <div class="text-[18px] font-semibold tracking-wider text-white uppercase leading-tight">GARE</div>
+          <div class="text-[11px] text-[#798fb1] font-medium leading-tight">Archives &amp; Documentation FCE</div>
+        </div>
+      </a>
+
+      <!-- Quick Action Button -->
+      <a href="{% url 'document_create' %}" class="w-full flex items-center justify-center gap-2 bg-[#0051d5] hover:bg-[#316bf3] text-white px-3 py-2 rounded text-[13px] font-semibold transition-all shadow-sm">
+        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+        <span>Nouvelle entrée FCE</span>
+      </a>
+
+      <!-- Navigation Tabs : Gestion des Archives remplace les 5 menus du classement principal -->
+      <nav class="flex flex-col gap-1 mt-1 overflow-y-auto max-h-[calc(100vh-270px)] pr-1 text-[13px]">
+        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded text-left transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-[#0f2744] text-white font-semibold border-l-2 border-[#0051d5]{% else %}text-[#798fb1] hover:text-white hover:bg-[#192739]{% endif %}">
+          <span class="material-symbols-outlined text-[18px]">dashboard</span>
+          <span>Tableau de bord</span>
+        </a>
+
+        <!-- Gestion des Archives (Catalogue unifié et 5 séries documentaires) -->
+        <a href="{% url 'document_list' %}" class="flex items-center gap-3 px-3 py-2 rounded text-left transition-colors {% if request.resolver_match.url_name == 'document_list' or request.resolver_match.url_name == 'document_detail' or request.resolver_match.url_name == 'document_create' or request.resolver_match.url_name == 'document_update' and not request.GET.ocr %}bg-[#0f2744] text-white font-semibold border-l-2 border-[#0051d5]{% else %}text-[#798fb1] hover:text-white hover:bg-[#192739]{% endif %}">
+          <span class="material-symbols-outlined text-[18px]">inventory_2</span>
+          <span>Gestion des Archives</span>
+        </a>
+
+        <!-- Recherche Plein Texte (OCR) -->
+        <a href="{% url 'ocr_search' %}" class="flex items-center gap-3 px-3 py-2 rounded text-left transition-colors {% if request.resolver_match.url_name == 'ocr_search' %}bg-[#0f2744] text-white font-semibold border-l-2 border-[#0051d5]{% else %}text-[#798fb1] hover:text-white hover:bg-[#192739]{% endif %}">
+          <span class="material-symbols-outlined text-[18px]">travel_explore</span>
+          <span>Recherche Plein Texte (OCR)</span>
+          <span class="ml-auto text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold">OCR</span>
+        </a>
+
+        <!-- Historique & Traçabilité -->
+        <a href="{% url 'audit_trail' %}" class="flex items-center gap-3 px-3 py-2 rounded text-left transition-colors {% if request.resolver_match.url_name == 'audit_trail' %}bg-[#0f2744] text-white font-semibold border-l-2 border-[#0051d5]{% else %}text-[#798fb1] hover:text-white hover:bg-[#192739]{% endif %}">
+          <span class="material-symbols-outlined text-[18px]">history</span>
+          <span>Historique &amp; Traçabilité</span>
+          <span class="ml-auto text-[10px] font-mono bg-emerald-700 text-white px-1.5 py-0.5 rounded font-bold">AUDIT</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile Footer -->
+    <div class="flex flex-col gap-1 border-t border-[#c4c6ce]/20 pt-3">
+      <div class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-[#192739] transition-colors">
+        <span class="material-symbols-outlined text-[#dbe1ff] text-[22px]">account_circle</span>
+        <div class="flex flex-col truncate">
+          <span class="text-white text-[12px] font-semibold truncate">Secrétariat Général FCE</span>
+          <span class="text-[#798fb1] font-mono text-[10px]">Compte Agent Autorisé</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 px-2 py-1 text-emerald-400 text-[11px] font-medium">
+        <span class="material-symbols-outlined text-[16px]">check_circle</span>
+        <span>Session active &amp; sécurisée</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- 2. TOPBAR                                                                 -->
+  <!-- ========================================================================= -->
+  <header class="fixed top-0 right-0 left-64 h-14 z-30 bg-[#f8f9ff] border-b border-[#c4c6ce] flex items-center justify-between px-6 select-none gap-4">
+    <!-- Titre Système GARE FCE -->
+    <div class="flex items-center gap-4 shrink-0">
+      <a href="{% url 'dashboard' %}" class="text-[14px] font-semibold text-[#001229] whitespace-nowrap hover:text-[#0051d5] transition-colors">
+        GARE — Système d'Archivage FCE
+      </a>
+    </div>
+
+    <!-- Cluster d'actions et statut -->
+    <div class="flex items-center gap-3 shrink-0">
+      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#e5eeff] text-[#44474d] text-[11px] font-medium">
+        <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+        <span class="font-mono text-[10px]">Réseau FCE en ligne</span>
+      </div>
+      <a href="{% url 'document_create' %}" class="h-8 px-3.5 bg-[#001229] hover:bg-[#0f2744] text-white rounded text-[11px] font-semibold flex items-center gap-1.5 transition-colors shadow-sm whitespace-nowrap">
+        <span class="material-symbols-outlined text-[#dbe1ff] text-[16px]">folder_open</span>
+        <span>Nouveau Dossier</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MAIN WORKSPACE CANVAS                                                  -->
+  <!-- ========================================================================= -->
+  <main class="ml-64 mt-14 flex-1 p-6 bg-[#f8f9ff] overflow-y-auto min-h-[calc(100vh-56px)]">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}GARE FCE — Supprimer {{ document.chrono }}{% endblock %}
+
+{% block content %}
+<div class="max-w-[700px] mx-auto flex flex-col gap-5 pb-16 font-sans select-none mt-10">
+  <div class="bg-white border-2 border-red-200 rounded-lg p-6 shadow-sm flex flex-col gap-4 text-center">
+    <div class="w-14 h-14 bg-red-50 text-red-700 rounded-full flex items-center justify-center mx-auto border border-red-200">
+      <span class="material-symbols-outlined text-[32px]">warning</span>
+    </div>
+
+    <h1 class="text-[20px] font-bold text-[#001229]">
+      Confirmer la suppression de l'acte d'archive ?
+    </h1>
+
+    <p class="text-xs text-[#44474d] max-w-md mx-auto">
+      Attention : Cette action retirera définitivement cet acte du registre courant. Si l'acte a déjà été versé sur support WORM, l'empreinte restera inscrite au journal d'audit légal.
+    </p>
+
+    <div class="bg-[#f8f9ff] border border-[#c4c6ce] p-4 rounded text-left text-xs space-y-1 my-2">
+      <div><strong>Chrono :</strong> <span class="font-mono text-[#0051d5] font-bold">{{ document.chrono }}</span></div>
+      <div><strong>Catégorie :</strong> {{ document.get_classement_display }}</div>
+      <div><strong>Objet :</strong> {{ document.title }}</div>
+      <div><strong>Date :</strong> {{ document.date_acte|date:"d/m/Y" }}</div>
+    </div>
+
+    <form method="post" class="flex items-center justify-center gap-3 pt-2">
+      {% csrf_token %}
+      <a href="{% url 'document_detail' document.pk %}" class="px-4 py-2 bg-white text-[#74777e] hover:text-[#001229] border border-[#c4c6ce] rounded text-xs font-semibold transition-colors">
+        Annuler
+      </a>
+      <button type="submit" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer">
+        <span class="material-symbols-outlined text-[16px]">delete_forever</span>
+        <span>Supprimer définitivement</span>
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
